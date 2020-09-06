@@ -61,7 +61,7 @@ def diffie_hellman(private_key, public_key, mod):
         print('Public key greatest than mod!')
 
 def gelfond_shanks():
-
+    
 
 def main():
     print('enter mod(prime number):')
@@ -83,13 +83,6 @@ def main():
     print('pow = ', fast_exponentiation(base, my_private_key, mod))
     print('ewklid = ', ewklid(100500900,200400500))
     print('DiffieHellman = ', diffie_hellman(eva_public_key,my_private_key, mod))
-    # print('x =')
-    # x = int(input())
-    # print('m =')
-    # mod = int(input())
-    # print(diffie_hellman(my_privat_key,public_key,mod))
-    # print('pow')
-    # print(fast_exponentiation(a,x,p))
 
 if __name__ == "__main__":
     main()
