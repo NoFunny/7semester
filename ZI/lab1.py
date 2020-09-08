@@ -4,12 +4,12 @@ import math
 
 #Villson Theorem
 def isPrime(n):
-    if (math.factorial(n - 1) + 1) % n != 0:
-        return False
-    else:
-        return True
+    if (n <= 2): return False
+    for num in range(2, math.floor(math.sqrt(n))):
+        if (n % num == 0): return False
+    return True
 
-def check_gen(p):
+def check_genP(p):
     if p <= 2:
         return False
     tmp = p - 1
@@ -60,16 +60,29 @@ def diffie_hellman(private_key, public_key, mod):
     else:
         print('Public key greatest than mod!')
 
-def gelfond_shanks():
+# def gelfond_shanks():
     
 
 def main():
+    # EWKLID
+    print('ewklid = ', ewklid(100500900,200400500))
+    
+    #POW
+    print('enter base:')
+    base = int(input())
+    print('enter x:')
+    x = int(input())
+    print('enter mod:')
+    mod = int(input())
+    print('pow = ', fast_exponentiation(base, x, mod))
+    
+    #DIFFIE HELLMAN
     print('enter mod(prime number):')
     tmp = int(input())
     mod = 0
     if isPrime(tmp):
         mod = tmp * 2 + 1
-    print('mod = ',mod)
+    print('mod for diffie hellman = ',mod)
     tmp = check_gen(mod)
     if tmp:
         base = tmp
@@ -80,9 +93,9 @@ def main():
     print('my_public_key = ',my_public_key)
     print('eva_privat_key =')
     eva_public_key = int((input()))
-    print('pow = ', fast_exponentiation(base, my_private_key, mod))
-    print('ewklid = ', ewklid(100500900,200400500))
     print('DiffieHellman = ', diffie_hellman(eva_public_key,my_private_key, mod))
+
+    #GELFOND SHANKS
 
 if __name__ == "__main__":
     main()
