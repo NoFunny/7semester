@@ -35,9 +35,14 @@ def genEuclideanAlgo(a, b):
     return U
 
 def diffieHellmanProtocol(p, g):
+    #sicret
     xA, xB = random.randint(1, 10), random.randint(1, 10)
+    #open
     yA, yB = fastModuloExponentiation(g, xA, p), fastModuloExponentiation(g, xB, p)
-    zA, zB = fastModuloExponentiation(yA, xA, p), fastModuloExponentiation(yB, xB, p)
+    if yA >= p and yB >= p:
+        sys.exit('Public key greatest mod')
+    else:
+        zA, zB = fastModuloExponentiation(yA, xA, p), fastModuloExponentiation(yB, xB, p)
     return zA == zB
 
 def firstEntry(list, x): 
@@ -51,7 +56,7 @@ def firstEntry(list, x):
 
 def babyGiantStep(a, p, y):
     # random generate m & k
-    m, k = random.randint(1, 10) * p / 2, random.randint(1, 10) * p / 2    
+    m, k = random.randint(1, 10) * log2(p)+1, random.randint(1, 10) * log2(p)    
     # m, k = 6, 4
     # --------------
 
@@ -62,8 +67,8 @@ def babyGiantStep(a, p, y):
         jList.append((a * jList[j-1]) % p) # in this case faster than call.fastModuloExponentiation()
 
     for i in range(1, k - 1):
-        result[1] = firstEntry(jList, iList[i - 1])
-        if result[1] != -1: 
+        result[i] = firstEntry(jList, iList[i - 1])
+        if result[i] != -1: 
             result[0] = i
             break
         iList.append((iList[i-1] * iList[i-1]) % p)
