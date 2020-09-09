@@ -83,7 +83,7 @@ def main():
     if isPrime(tmp):
         mod = tmp * 2 + 1
     print('mod for diffie hellman = ',mod)
-    tmp = check_gen(mod)
+    tmp = check_genP(mod)
     if tmp:
         base = tmp
     print('base = ',base)
