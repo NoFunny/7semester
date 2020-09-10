@@ -56,7 +56,7 @@ def firstEntry(list, x):
 
 def babyGiantStep(a, p, y):
     # random generate m & k
-    m, k = random.randint(1, 10) * log2(p)+1, random.randint(1, 10) * log2(p)    
+    m, k = random.randint(1, 10) * math.floor(math.log2(p))+1, random.randint(1, 10) * math.floor(math.log2(p))+1    
     # m, k = 6, 4
     # --------------
 
@@ -77,13 +77,15 @@ def babyGiantStep(a, p, y):
 
 def main():
     # Section №1 --- # Fast modulo expotential
-    p, a, x = int(input())
+    print('input p(PRIME), a, x for fastModuleExponential:')
+    p, a, x = int(input()), int(input()), int(input())
 
     if not isPrime(p): sys.exit('ERROR. You entered a composite number. Try again.')
     
     print(fastModuloExponentiation(a, x, p))
 
     # Section №2 --- # Generalized Euclidean algorithm.
+    print('input a, b for GCD:')
     a, b = int(input()), int(input())
 
     gcd, x, y = genEuclideanAlgo(a, b)
@@ -91,11 +93,14 @@ def main():
     print('GCD = ', gcd, 'X = ', x, 'Y = ', y)
 
     # Section №3 --- # Diffi-Hallman protocol. Generating common key's.
+    print('input p(PRIME), g(PRIME) for difiieHellman:')
     p, g = int(input()), int(input())
+    if not isPrime(p): sys.exit('ERROR. You entered a composite number. Try again.')
 
     print(diffieHellmanProtocol(p, g))
 
     # Section №4 --- # Baby step, Giant step algorithm.
+    print('input a, p, y for babyGiantStep:')
     a, p, y = int(input()), int(input()), int(input())
 
     result = babyGiantStep(a, p, y)
