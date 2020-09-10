@@ -21,7 +21,7 @@ def fastModuloExponentiation(a, x, p):
 
         if (x % 2) == 1:
             result *= tmp
-        x //= 2
+        x >>= 1
 
     return result % p
         
@@ -38,34 +38,15 @@ def genEuclideanAlgo(a, b):
     return U
 
 def diffieHellmanProtocol(p, g):
-    # if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
-    # if g <= 1 and g >= p - 1: sys.exit('ERROR. [G] Must be (1 < g < p - 1)')
-
-    # q = p / 2 - 1
-    
-    # if not isPrime(q): sys.exit('ERROR. [Q] must be prime number.')
-    # if fastModuloExponentiation(p, g, q) == 1: print('ERROR. [G] Must be (g^q mod p != 1)')
-    
-    # # xA, xB = random.randint(1, 10), random.randint(1, 10)    
-    # xA, xB = 7, 13
-    # yA, yB = fastModuloExponentiation(g, xA, p), fastModuloExponentiation(g, xB, p)
-    # zA, zB = fastModuloExponentiation(yA, xA, p), fastModuloExponentiation(yB, xB, p)
-    
-    # if zA != zB: print('ERROR. [Q] Select unfit Q')
-    
-    # return 
-
     if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
 
     q = (p - 1) / 2
 
     if not isPrime(q): sys.exit('ERROR. [Q] must be prime number.')
     if g <= 1 and g >= p - 1: sys.exit('ERROR. [G] Must be (1 < g < p - 1)')
-    print('HELLO - ', g, ' -- ', q, ' -- ', p)
     if fastModuloExponentiation(g, q, p) == 1: sys.exit('ERROR. [G] Must be (g^q mod p != 1)')
 
-    # xA, xB = random.randint(1, 10), random.randint(1, 10)    
-    xA, xB = 7, 13
+    xA, xB = random.randint(1, 10), random.randint(1, 10)
     yA, yB = fastModuloExponentiation(g, xA, p), fastModuloExponentiation(g, xB, p)
     zA, zB = fastModuloExponentiation(yB, xA, p), fastModuloExponentiation(yA, xB, p)
     
@@ -85,8 +66,7 @@ def firstEntry(list, x):
 
 def babyGiantStep(a, p, y):
     # random generate m & k
-    m, k = random.randint(1, 10) * math.floor(math.log2(p))+1, random.randint(1, 10) * math.floor(math.log2(p))+1    
-    # m, k = 6, 4
+    m, k = random.randint(1, 10) * math.floor(math.log2(p))+2, random.randint(1, 10) * math.floor(math.log2(p))+2    
     # --------------
 
     result = [0, 0]
@@ -105,34 +85,49 @@ def babyGiantStep(a, p, y):
     return result[0] * m - result[1]
 
 def main():
-    # Section №1 --- # Fast modulo expotential
-    """ print('input p(Prime), a, x(1, 2, ... , p-1) for fastModuleExponential:')
-    p, a, x = int(input()), int(input()), int(input())
-    
-    print(fastModuloExponentiation(a, x, p)) """
+    # Section №0 -- # Menu
+    print('''Select case:
+        1) Fast Modulo Exponentioal
+        2) Euclidean algorithm
+        3) Diffi-Hallman protocol
+        4) Baby-step, giant-step''')
 
-    # # Section №2 --- # Generalized Euclidean algorithm.
-    """ print('input a, b for GCD:')
-    a, b = int(input()), int(input())
+    select = int(input())
 
-    gcd, x, y = genEuclideanAlgo(a, b)
+    if select == 1:
+        # Section №1 --- # Fast modulo expotential
+        print('input p(Prime), a, x(1, 2, ... , p-1):')
+        p, a, x = int(input()), int(input()), int(input())
 
-    print('GCD = ', gcd, 'X = ', x, 'Y = ', y) """
+        print(fastModuloExponentiation(a, x, p))
 
-    # Section №3 --- # Diffi-Hallman protocol. Generating common key's.
-    print('input p(Prime), g(1 < g < p - 1) for difiieHellman:')
-    p, g = int(input()), int(input())
-    # if not isPrime(p): sys.exit('ERROR. You entered a composite number. Try again.')
-    print(diffieHellmanProtocol(p, g))
+    if select == 2:
+        # Section №2 --- # Generalized Euclidean algorithm.
+        print('input a, b:')
+        a, b = int(input()), int(input())
 
-    # Section №4 --- # Baby step, Giant step algorithm.
-    """ print('input a, p, y for babyGiantStep:')
-    a, p, y = int(input()), int(input()), int(input())
+        gcd, x, y = genEuclideanAlgo(a, b)
 
-    result = babyGiantStep(a, p, y)
+        print('GCD = ', gcd, 'X = ', x, 'Y = ', y)
 
-    if fastModuloExponentiation(a, result, p) == y: print(a, '^', result, ' mod ', p, ' = ', y)
-    else: print('Verification failed') """
+    if select == 3:
+        # Section №3 --- # Diffi-Hallman protocol. Generating common key's.
+        print('input p(Prime), g(1 < g < p - 1):')
+        p, g = int(input()), int(input())
+        # if not isPrime(p): sys.exit('ERROR. You entered a composite number. Try again.')
+        print(diffieHellmanProtocol(p, g))
+        
+    if select == 4:
+        # Section №4 --- # Baby step, Giant step algorithm.
+        print('input a, p, y:')
+        a, p, y = int(input()), int(input()), int(input())
+
+        result = babyGiantStep(a, p, y)
+
+        if fastModuloExponentiation(a, result, p) == y: print(a, '^', result, ' mod ', p, ' = ', y)
+        else: print('Verification failed')
+
+
 
 if __name__ == "__main__":
     main()
