@@ -35,8 +35,16 @@ def genEuclideanAlgo(a, b):
     return U
 
 def diffieHellmanProtocol(p, g):
+    cnt = 1
     #sicret
-    xA, xB = random.randint(1, 10), random.randint(1, 10)
+    while cnt:
+        xA, xB = random.randint(1, 10), random.randint(1, 10)
+        if(xA < xB):
+            continue
+        else:
+            cnt = 0    
+    print('xA = ' ,xA)
+    print('xB = ' , xB)
     #open
     yA, yB = fastModuloExponentiation(g, xA, p), fastModuloExponentiation(g, xB, p)
     if yA >= p and yB >= p:
@@ -61,42 +69,42 @@ def babyGiantStep(a, p, y):
     # --------------
 
     result = [0, 0]
-    iList, jList = [fastModuloExponentiation(a, m, p)], [y]
+    giantSteps, babySteps = [fastModuloExponentiation(a, m, p)], [y]
 
     for j in range(1, m):
-        jList.append((a * jList[j-1]) % p) # in this case faster than call.fastModuloExponentiation()
+        babySteps.append((a * babySteps[j-1]) % p) # in this case faster than call.fastModuloExponentiation()
 
     for i in range(1, k - 1):
-        result[i] = firstEntry(jList, iList[i - 1])
+        result[i] = firstEntry(babySteps, giantSteps[i - 1])
         if result[i] != -1: 
             result[0] = i
             break
-        iList.append((iList[i-1] * iList[i-1]) % p)
+        giantSteps.append((giantSteps[i-1] * giantSteps[i-1]) % p)
     
     return result[0] * m - result[1]
 
 def main():
     # Section №1 --- # Fast modulo expotential
-    print('input p(PRIME), a, x for fastModuleExponential:')
-    p, a, x = int(input()), int(input()), int(input())
+    # print('input p(PRIME), a, x for fastModuleExponential:')
+    # p, a, x = int(input()), int(input()), int(input())
 
-    if not isPrime(p): sys.exit('ERROR. You entered a composite number. Try again.')
+    # if not isPrime(p): sys.exit('ERROR. You entered a composite number. Try again.')
     
-    print(fastModuloExponentiation(a, x, p))
+    # print(fastModuloExponentiation(a, x, p))
 
-    # Section №2 --- # Generalized Euclidean algorithm.
-    print('input a, b for GCD:')
-    a, b = int(input()), int(input())
+    # # Section №2 --- # Generalized Euclidean algorithm.
+    # print('input a, b for GCD:')
+    # a, b = int(input()), int(input())
 
-    gcd, x, y = genEuclideanAlgo(a, b)
+    # gcd, x, y = genEuclideanAlgo(a, b)
 
-    print('GCD = ', gcd, 'X = ', x, 'Y = ', y)
+    # print('GCD = ', gcd, 'X = ', x, 'Y = ', y)
 
     # Section №3 --- # Diffi-Hallman protocol. Generating common key's.
-    print('input p(PRIME), g(PRIME) for difiieHellman:')
+    print('input p(PRIME), g(1 < g < p - 1) for difiieHellman:')
     p, g = int(input()), int(input())
     if not isPrime(p): sys.exit('ERROR. You entered a composite number. Try again.')
-
+    if g <= 1 and g >= p - 1: sys.exit('ERROR. g must be: 1 < g < p - 1')
     print(diffieHellmanProtocol(p, g))
 
     # Section №4 --- # Baby step, Giant step algorithm.
