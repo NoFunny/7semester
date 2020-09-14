@@ -8,7 +8,6 @@ class Calculate
   attr_accessor :result
 
   def self.calc(temp, from, to)
-    puts (5/9).to_f
     return if temp.zero? || from.empty? || to.empty?
 
     if from == 'c' || from == 'k' || from == 'f' &&
