@@ -15,7 +15,7 @@ class Calculate
     return nil if temp == 0.0 || from.empty? || to.empty?
 
     if from == 'c' || from == 'k' || from == 'f' &&
-                                       to == 'c' || to == 'k' || to == 'f'
+                                     to == 'c' || to == 'k' || to == 'f'
       @result = temp * 1.8 + 32 if from == 'c' && to == 'f'
       @result = temp + 273.15 if from == 'c' && to == 'k'
       @result = (temp - 32) * 1.8 if from == 'f' && to == 'c'
