@@ -14,7 +14,8 @@ def isPrime(n):
 def fastModuloExponentiation(a, x, p):
     if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
     if 1 > x >= p: sys.exit('ERROR. [X] Must be from range (1, 2, ... , p-1)')
-
+    # if x < 0:
+    #     a = genEuclideanAlgo()
     result = 1
     tmp = a
     while x:
@@ -57,34 +58,40 @@ def diffieHellmanProtocol(p, g):
 
 def babyGiantStep(a, p, y):
     # random generate m & k
+    # gn и n = m и k
+    # log(p)
+    # g^n mod p
     m, k = random.randint(1, 10) * math.floor(math.sqrt(p)) + 1, random.randint(1, 10) * math.floor(math.sqrt(p)) + 1
-    # --------------
 
+    # --------------
     steps = ({})
     n = math.floor(math.sqrt(p)+1)
-
-    # log(p)
     gn = fastModuloExponentiation(a,n,p)
+
     val1 = gn
-    print(n)
-    print('N = ', n)
+    print('m = ', m)
+    print('k = ', k)
     # m = n = sqrt(p)
     # Получение элемента: O(1).
-    # Проход по словарю: O(n).
-    for i in range(0, m):
-        print('steps = ',steps)
+    i = 0
+
+    while i < m:
         steps[i] = val1
         val1 = (val1 * gn) % p
+        i+=1
 
     val2 = y % p
     j = 0
     while j <= k-1:
-        if steps[val2]:
-            ans = steps[val2] * n - j
+        # Проход по словарю: O(n).
+        if steps.get(val2):
+            ans = steps.get(val2) * n - j
             if ans < p:
                 return ans
+
         val2 = (val2 * a)  % p
         j+=1
+
     return -1
 
 
@@ -132,7 +139,6 @@ def main():
             print(a, '^', result, ' mod ', p, ' = ', y)
         else:
             print('Verification failed')
-
 
 if __name__ == "__main__":
     main()
