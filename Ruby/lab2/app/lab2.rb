@@ -39,7 +39,7 @@ if $PROGRAM_NAME == __FILE__
   math = Calculate.new
   cnt = 1
   reg_str = '([{c,f,k}]->[(c,f,k)])$'
-  reg_digit = '^[0-9]*[.]?[0-9]+$'
+  reg_digit = '^[-]?[0-9]*[.]?[0-9]+$'
   while cnt == 1
     puts "Enter temperature(for float template x.xx), from->to\n"
     puts 'Temperature:'
