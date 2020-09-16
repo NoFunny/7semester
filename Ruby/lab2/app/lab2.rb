@@ -8,7 +8,6 @@ end
 
 # Description/Explanation of Calculate class
 class Calculate
-  attr_accessor :result
 
   def c_to_f(temp)
     ((temp * 1.8) + 32).round(2)
