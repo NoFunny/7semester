@@ -38,7 +38,7 @@ describe Calculate do
       it '24.44' do
         expect(obj.f_to_c(76)).to eq 24.44
       end
-      it '32.03' do
+      it '32.04' do
         expect(obj.f_to_c(89.67)).to eq 32.04
       end
     end
@@ -49,10 +49,10 @@ describe Calculate do
   describe '.f_to_k' do
     context 'f_to_k method check on correct value.' do
       let(:obj) { Calculate.new }
-      it '297.594' do
+      it '297.59' do
         expect(obj.f_to_k(76)).to eq 297.59
       end
-      it '305.18' do
+      it '305.19' do
         expect(obj.f_to_k(89.67)).to eq 305.19
       end
     end
@@ -80,7 +80,7 @@ describe Calculate do
       it '181.13' do
         expect(obj.k_to_f(356)).to eq 181.13
       end
-      it '81.338' do
+      it '81.34' do
         expect(obj.k_to_f(300.56)).to eq 81.34
       end
     end
