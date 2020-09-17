@@ -14,16 +14,19 @@ def isPrime(n):
 def fastModuloExponentiation(a, x, p):
     if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
     if 1 > x >= p: sys.exit('ERROR. [X] Must be from range (1, 2, ... , p-1)')
-    # if x < 0:
-    #     a = genEuclideanAlgo()
     result = 1
     tmp = a
+    if x < 0:
+        x = -x
     while x:
         if x & 1:
             result = (result * tmp) % p
         tmp = (tmp * tmp) % p
         x >>= 1
-    return result
+    if x < 0:
+        return 1 / result
+    else:
+        return result
 
 
 
@@ -57,43 +60,42 @@ def diffieHellmanProtocol(p, g):
     return zA
 
 def babyGiantStep(a, p, y):
-    # random generate m & k
-    # gn и n = m и k
     # log(p)
-    # g^n mod p
-    m, k = random.randint(1, 10) * math.floor(math.sqrt(p)) + 1, random.randint(1, 10) * math.floor(math.sqrt(p)) + 1
-
-    # --------------
     steps = ({})
-    n = math.floor(math.sqrt(p)+1)
-    gn = fastModuloExponentiation(a,n,p)
-
-    val1 = gn
-    print('m = ', m)
-    print('k = ', k)
-    # m = n = sqrt(p)
-    # Получение элемента: O(1).
+    m = math.ceil(math.sqrt(p)+1)
+    k = fastModuloExponentiation(a, m ,p)
+    val1 = y % p
     i = 0
-
     while i < m:
-        steps[i] = val1
-        val1 = (val1 * gn) % p
+        steps[val1] = i
+        val1 = (val1 * a) % p
         i+=1
 
-    val2 = y % p
-    j = 0
-    while j <= k-1:
+    val2 = fastModuloExponentiation(a, m, p)
+    i = 1
+    while i <= k-1:
         # Проход по словарю: O(n).
-        if steps.get(val2):
-            ans = steps.get(val2) * n - j
-            if ans < p:
+        if steps.__contains__(val2):
+            ans = i * m - steps[val2]
+            if fastModuloExponentiation(a, ans, p) == y :
                 return ans
-
-        val2 = (val2 * a)  % p
-        j+=1
-
+        val2 = (val2 * k)  % p
+        i+=1
     return -1
 
+# def generate_G(p):
+#     if p <= 2:
+#         sys.exit('p to small')
+#     tmp = p - 1
+#     q = tmp/2
+#     if tmp%2 !=0 and isPrime(q):
+#         sys.exit('!p = 2q+1')
+#     g = p - 2
+#     while fastModuloExponentiation(g,q.__int__(),p) == 1:
+#         g-=1
+#     if g <= 1:
+#         sys.exit('error')
+#     return g
 
 def main():
     # Section №0 -- # Menu
@@ -107,10 +109,12 @@ def main():
 
     if select == 1:
         # Section №1 --- # Fast modulo exponential
-        print('input p(Prime), a, x(1, 2, ... , p-1):')
-        a, x, p = int(input()), int(input()), int(input())
+        print('input g, x(1, 2, ... , p-1), p(Prime), :')
+        g, x, p = int(input()), int(input()),int(input())
+        # print('Generate g...')
+        # g = generate_G(p)
 
-        print(fastModuloExponentiation(a, x, p))
+        print(fastModuloExponentiation(g, x, p))
 
     if select == 2:
         # Section №2 --- # Generalized Euclidean algorithm.
@@ -130,15 +134,11 @@ def main():
 
     if select == 4:
         # Section №4 --- # Baby step, Giant step algorithm.
-        print('input a, p, y:')
-        a, p, y = int(input()), int(input()), int(input())
+        print('input g, p, y:')
+        g, p, y = int(input()), int(input()), int(input())
 
-        result = babyGiantStep(a, p, y)
-        print('Result', result)
-        if fastModuloExponentiation(a, result, p) == y:
-            print(a, '^', result, ' mod ', p, ' = ', y)
-        else:
-            print('Verification failed')
+        result = babyGiantStep(g, p, y)
+        print(g, '^', result, ' mod ', p, ' = ', y)
 
 if __name__ == "__main__":
     main()
