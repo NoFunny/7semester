@@ -1,9 +1,8 @@
 #!/usr/bin/python3
-# coding=utf-8
+
 import sys
 import math
 import random
-import operator
 
 
 def isPrime(n):
@@ -52,21 +51,19 @@ def genEuclideanAlgo(a, b):
         return g, y - (b // a) * x, x
 
 
-def diffieHellmanProtocol(p, g):
-    if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
+def diffieHellmanProtocol(q):
+    if not isPrime(q): sys.exit('ERROR. [q] must be prime number.')
+    p = q * 2 + 1
+    if not isPrime(p): sys.exit('ERROR. [p = 2q + 1] must be prime number.')
 
-    q = (p - 1) / 2
-
-    if not isPrime(q): sys.exit('ERROR. [Q] must be prime number.')
-    if 1 >= g >= p - 1: sys.exit('ERROR. [G] Must be (1 < g < p - 1)')
-    if fastModuloExponentiation(g, q, p) == 1: sys.exit('ERROR. [G] Must be (g^q mod p != 1)')
+    g = random.randint(1, p - 1)
+    while fastModuloExponentiation(g, q, p) == 1: g = random.randint(1, p - 1)
 
     xA, xB = random.randint(1, 10), random.randint(1, 10)
     yA, yB = fastModuloExponentiation(g, xA, p), fastModuloExponentiation(g, xB, p)
     zA, zB = fastModuloExponentiation(yB, xA, p), fastModuloExponentiation(yA, xB, p)
 
-    if zA != zB: print('ERROR. zA != zB')
-
+    if zA != zB: print('ERROR. [Diffie-Hellman] zA != zB')
     return zA
 
 
@@ -100,21 +97,6 @@ def babyGiantStep(a, p, y):
     return -1
 
 
-def generate_G(p):
-    if p <= 2:
-        sys.exit('p to small')
-    tmp = p - 1
-    q = tmp / 2
-    if tmp % 2 != 0 and isPrime(q):
-        sys.exit('!p = 2q+1')
-    g = p - 2
-    while fastModuloExponentiation(g, q.__int__(), p) == 1:
-        g -= 1
-    if g <= 1:
-        sys.exit('error')
-    return g
-
-
 def main():
     mulinv(15, 23)
     # Section №0 -- # Menu
@@ -146,19 +128,9 @@ def main():
 
     if select == 3:
         # Section №3 --- # Diffie-Hellman protocol. Generating common key's.
-        print('input p(Prime), g(1 < g < p - 1):')
-        p, g = int(input()), int(input())
-        flag = 1
-        # q = 3
-        # p = 7
-        # while flag == 1:
-        #     q = random.randint(1,50)
-        #     p = 2*q+1
-        #     if isPrime(p):
-        #         flag = 0
-        # g= 7
-        if not isPrime(p): sys.exit('ERROR. You entered a composite number. Try again.')
-        print(diffieHellmanProtocol(p, g))
+        print('input q(Prime)')
+        q = int(input())
+        print(diffieHellmanProtocol(q))
 
     if select == 4:
         # Section №4 --- # Baby step, Giant step algorithm.
