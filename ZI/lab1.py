@@ -35,15 +35,6 @@ def fastModuloExponentiation(a, x, p):
 
 
 def genEuclideanAlgo(a, b):
-    # if b > a: a, b = b, a
-    #
-    # U, V = [a, 1, 0], [b, 0, 1]
-    #
-    # while V[0] != 0:
-    #     tmp = U[0] // V[0]
-    #     tmpList = [U[0] % V[0], U[1] - tmp * V[1], U[2] - tmp * V[2]]
-    #     U, V = V, tmpList
-    # return U
     if a == 0:
         return b, 0, 1
     else:
@@ -98,7 +89,6 @@ def babyGiantStep(a, p, y):
 
 
 def main():
-    mulinv(15, 23)
     # Section №0 -- # Menu
     print('''Select case:
         1) Fast Modulo Exponential
@@ -112,8 +102,6 @@ def main():
         # Section №1 --- # Fast modulo exponential
         print('input g, x(1, 2, ... , p-1), p(Prime), :')
         g, x, p = int(input()), int(input()), int(input())
-        # print('Generate g...')
-        # g = generate_G(p)
 
         print(fastModuloExponentiation(g, x, p))
 
