@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import sys
 import math
 import random
@@ -9,7 +10,6 @@ def isPrime(n):
     for num in range(2, math.floor(math.sqrt(n))):
         if n % num == 0: return False
     return True
-
 
 def fastModuloExponentiation(a, x, p):
     if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
@@ -28,8 +28,6 @@ def fastModuloExponentiation(a, x, p):
     else:
         return result
 
-
-
 def genEuclideanAlgo(a, b):
     if b > a: a, b = b, a
 
@@ -41,22 +39,19 @@ def genEuclideanAlgo(a, b):
         U, V = V, tmpList
     return U
 
+def diffieHellmanProtocol(q):
+    if not isPrime(q): sys.exit('ERROR. [q] must be prime number.')
+    p = q * 2 + 1
+    if not isPrime(p): sys.exit('ERROR. [p = 2q + 1] must be prime number.')
 
-def diffieHellmanProtocol(p, g):
-    if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
-
-    q = (p - 1) / 2
-
-    if not isPrime(q): sys.exit('ERROR. [Q] must be prime number.')
-    if 1 >= g >= p - 1: sys.exit('ERROR. [G] Must be (1 < g < p - 1)')
-    if fastModuloExponentiation(g, q, p) == 1: sys.exit('ERROR. [G] Must be (g^q mod p != 1)')
+    g = random.randint(1, p - 1)
+    while (fastModuloExponentiation(g, q, p) == 1): g = random.randint(1, p - 1)
 
     xA, xB = random.randint(1, 10), random.randint(1, 10)
     yA, yB = fastModuloExponentiation(g, xA, p), fastModuloExponentiation(g, xB, p)
     zA, zB = fastModuloExponentiation(yB, xA, p), fastModuloExponentiation(yA, xB, p)
 
-    if zA != zB: print('ERROR. zA != zB')
-
+    if zA != zB: print('ERROR. [Diffi-Hallman] zA != zB')
     return zA
 
 def babyGiantStep(a, p, y):
@@ -127,10 +122,9 @@ def main():
 
     if select == 3:
         # Section №3 --- # Diffie-Hellman protocol. Generating common key's.
-        print('input p(Prime), g(1 < g < p - 1):')
-        p, g = int(input()), int(input())
-        # if not isPrime(p): sys.exit('ERROR. You entered a composite number. Try again.')
-        print(diffieHellmanProtocol(p, g))
+        print('input q(Prime)')
+        q = int(input())
+        print(diffieHellmanProtocol(q))
 
     if select == 4:
         # Section №4 --- # Baby step, Giant step algorithm.
