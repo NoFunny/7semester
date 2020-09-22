@@ -23,6 +23,8 @@ def fastModuloExponentiation(a, x, p):
     if 1 > x >= p: sys.exit('ERROR. [X] Must be from range (1, 2, ... , p-1)')
     result = 1
     tmp = a
+    if a == 0:
+        return 0
     if x < 0:
         tmp = mulinv(a, p)
         x = -x
@@ -80,6 +82,7 @@ def babyGiantStep(a, p, y):
         if steps.__contains__(val2):
             print(steps[val2])
             ans = i * m - steps[val2]
+            print('ans = ', ans)
             if fastModuloExponentiation(a, ans, p) == y:
                 return ans
         val2 = (val2 * k) % p
