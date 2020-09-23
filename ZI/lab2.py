@@ -22,16 +22,13 @@ def isPrime(n):
     return True
 
 
-def shamir_secret(p, m):
-    if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
+def shamir_secret(m, p):
+    if not (isPrime(p) and (p > 255)): sys.exit('ERROR. [P] must be prime number or p <= 255.')
     Ca = eratosthenes(p - 1)
     Cb = eratosthenes(p - 1)
     Da = lab1.genEuclideanAlgo(Ca, p - 1)[1]
     Db = lab1.genEuclideanAlgo(Cb, p - 1)[1]
     if int.from_bytes(m, 'big') >= p:
-        # print('m = ', m)
-        # print('m = ', int.to_bytes(m, m, byteorder='little'))
-        # m = int.to_bytes(m[0], m, byteorder='big')
         x1 = [0] * m.__len__()
         x2 = [0] * m.__len__()
         x3 = [0] * m.__len__()
@@ -52,6 +49,7 @@ def shamir_secret(p, m):
             else:
                 print(x4[i], ' != ', m[i])
                 return False
+        print("Successful!")
         return True
     else:
         x1 = lab1.fastModuloExponentiation(int.from_bytes(m, 'big'), Ca, p)
@@ -62,14 +60,34 @@ def shamir_secret(p, m):
         if not x4 == int.from_bytes(m, 'big'):
             print(x4, ' != ', m)
             return False
+        print(x4, ' == ', m)
+        print("Successful!")
         return True
 
 
-# def el_gamal(p):
-#
+def el_gamal(p, g, m):
+    if not isPrime(p): sys.exit('ERROR. [P] must be prime number or p <= 255.')
+    Ca = random.randint(1, p-1)
+    Cb = random.randint(1, p-1)
+    # Cd = random.randint(1, p-1)
+    Da = lab1.fastModuloExponentiation(g, Ca, p)
+    Db = lab1.fastModuloExponentiation(g, Cb, p)
+    # Dc = lab1.fastModuloExponentiation(g, Cd, p)
+
+    k = random.randint(1, p-1)
+    r = lab1.fastModuloExponentiation(g, k, p)
+    e = m*lab1.fastModuloExponentiation(Db, k, p)
+
+    mx = e * lab1.fastModuloExponentiation(r, p-1-Cb, p)
+    print(m, mx)
+    if m == mx:
+        print(m, ' = ', mx)
+        return True
+    print(m, ' != ', mx)
+    return False
 # def vernam(p):
 #
-# def rsa(p):1
+# def rsa(p):
 #
 def main():
     # Section №0 -- # Menu
@@ -82,7 +100,7 @@ def main():
     select = int(input())
 
     if select == 1:
-        with open("lab2.py", "rb") as f:
+        with open("testData/test.jpg", "rb") as f:
             m = f.read()
             print(m)
         f.close()
@@ -90,10 +108,14 @@ def main():
         p = int(input())
         # print('m = ', int.from_bytes(m))
         # print(int.from_bytes(m, 'big') > p)
-        print(shamir_secret(p, m))
+        print(shamir_secret(m, p))
 
-    # if select == 2:
-    #     el_gamal()
+    if select == 2:
+        # print("Enter p(Prime and p > 255):")
+        # p = int(input())
+        # print("Enter g :")
+        # g = int(input())
+        el_gamal(23, 5, 15)
     #
     # if select == 3:
     #     vernam()
