@@ -112,30 +112,33 @@ def el_gamal(p, g, m):
     return False
 
 
-class vernam:
+class Vernam:
 
     def __init__(self, m, k):
         self.m = m
         self.k = k
         self.mx = [0] * m.__len__()
+        self.encrypted_message = [0] * m.__len__()
 
     def encrypt(self):
         mx = [0] * self.m.__len__()
-        for i in range(1, self.m.__len__()):
+        for i in range(0, self.m.__len__()):
+            print(i)
             self.mx[i] = self.m[i] ^ self.k[i]
+        return self.mx
 
     def decrypt(self):
-        # mx = [0] * self.m.__len__()
-        for i in range(1, self.m.__len__()):
-            self.m[i] = self.mx[i] ^ self.k[i]
+        for i in range(0, self.m.__len__()):
+            self.encrypted_message[i] = self.mx[i] ^ self.k[i]
+        return self.m
 
     def compare(self):
-        for i in range(1, self.m.__len__()):
-            if self.m[i] == self.mx[i]:
-                print(self.mx[i], ' == ', self.m[i])
+        for i in range(0, self.m.__len__()):
+            if self.m[i] == self.encrypted_message[i]:
+                print(self.encrypted_message[i], ' == ', self.m[i])
                 continue
             else:
-                print(self.mx[i], ' != ', self.m[i])
+                print(self.encrypted_message[i], ' != ', self.m[i])
                 print("Error!")
                 return False
         print("Successful!")
@@ -144,7 +147,9 @@ class vernam:
 
 # def rsa(p):
 #
+
 def main():
+    
     # TODO:
     # Нужно сделать генерацию P и G!
 
@@ -178,19 +183,22 @@ def main():
         el_gamal(p, g, m)
 
     if select == 3:
-        # with open("testData/test.jpg", "rb") as f:
-        #     m = f.read()
-        #     print(m)
-        # f.close()
-        a = "1000"
-        b = "1010"
-        y = int(a, 2) ^ int(b, 2)
-        print(bin(y)[2:].zfill(len(a)))
+        with open("testData/test.jpg", "rb") as f:
+            m = f.read()
+            print(m)
+        f.close()
+        k = []
+        for i in range(0, m.__len__()):
+            k.append(random.randint(0, 255))
+        vernam = Vernam(m, k)
+        print(k)
+        vernam.encrypt()
+        vernam.decrypt()
+        print(vernam.compare())
+        del vernam
 
-    #     vernam()
-    #
     # if select == 4:
-    #     rsa()
+        # rsa()
 
 
 if __name__ == "__main__":
