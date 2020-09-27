@@ -48,6 +48,7 @@ def shamir_secret(m, p):
                 continue
             else:
                 print(x4[i], ' != ', m[i])
+                print("Error!")
                 return False
         print("Successful!")
         return True
@@ -59,6 +60,7 @@ def shamir_secret(m, p):
         # Проверка на равность полученного сообщения и изначального
         if not x4 == int.from_bytes(m, 'big'):
             print(x4, ' != ', m)
+            print("Error!")
             return False
         print(x4, ' == ', m)
         print("Successful!")
@@ -67,29 +69,85 @@ def shamir_secret(m, p):
 
 def el_gamal(p, g, m):
     if not isPrime(p): sys.exit('ERROR. [P] must be prime number or p <= 255.')
-    Ca = random.randint(1, p-1)
-    Cb = random.randint(1, p-1)
-    # Cd = random.randint(1, p-1)
+    Ca = random.randint(1, p - 1)
+    Cb = random.randint(1, p - 1)  # Алгоритм евлкида
+    Cd = random.randint(1, p - 1)
     Da = lab1.fastModuloExponentiation(g, Ca, p)
     Db = lab1.fastModuloExponentiation(g, Cb, p)
-    # Dc = lab1.fastModuloExponentiation(g, Cd, p)
+    Dc = lab1.fastModuloExponentiation(g, Cd, p)
+    # Зачем нужны Ca, Cd, Da, Dc пока что не разобрался, но в методичке они есть
+    if int.from_bytes(m, 'big') >= p:
+        k = [0] * m.__len__()
+        r = [0] * m.__len__()
+        mx = [0] * m.__len__()
+        e = [0] * m.__len__()
 
-    k = random.randint(1, p-1)
-    r = lab1.fastModuloExponentiation(g, k, p)
-    e = m*lab1.fastModuloExponentiation(Db, k, p)
-
-    mx = e * lab1.fastModuloExponentiation(r, p-1-Cb, p)
-    print(m, mx)
+        for i in range(0, m.__len__()):
+            k[i] = random.randint(1, p - 2)
+            print(k[i])
+            r[i] = lab1.fastModuloExponentiation(g, k[i], p)
+            e[i] = m[i] * lab1.fastModuloExponentiation(Db, k[i], p) % p
+            mx[i] = e[i] * lab1.fastModuloExponentiation(r[i], p - 1 - Cb, p) % p
+        for i in range(0, m.__len__()):
+            if mx[i] == m[i]:
+                print(mx[i], ' == ', m[i])
+                continue
+            else:
+                print(mx[i], ' != ', m[i])
+                print("Error!")
+                return False
+        print("Successful!")
+        return True
+    else:
+        k = random.randint(1, p - 2)
+        r = lab1.fastModuloExponentiation(g, k, p)
+        e = m * lab1.fastModuloExponentiation(Db, k, p) % p
+        mx = e * lab1.fastModuloExponentiation(r, p - 1 - Cb, p) % p
     if m == mx:
-        print(m, ' = ', mx)
+        print(m, ' == ', mx)
+        print("Successful!")
         return True
     print(m, ' != ', mx)
+    print("Error!")
     return False
-# def vernam(p):
-#
+
+
+class vernam:
+
+    def __init__(self, m, k):
+        self.m = m
+        self.k = k
+        self.mx = [0] * m.__len__()
+
+    def encrypt(self):
+        mx = [0] * self.m.__len__()
+        for i in range(1, self.m.__len__()):
+            self.mx[i] = self.m[i] ^ self.k[i]
+
+    def decrypt(self):
+        # mx = [0] * self.m.__len__()
+        for i in range(1, self.m.__len__()):
+            self.m[i] = self.mx[i] ^ self.k[i]
+
+    def compare(self):
+        for i in range(1, self.m.__len__()):
+            if self.m[i] == self.mx[i]:
+                print(self.mx[i], ' == ', self.m[i])
+                continue
+            else:
+                print(self.mx[i], ' != ', self.m[i])
+                print("Error!")
+                return False
+        print("Successful!")
+        return True
+
+
 # def rsa(p):
 #
 def main():
+    # TODO:
+    # Нужно сделать генерацию P и G!
+
     # Section №0 -- # Menu
     print('''Select case:
             1) Shamir secret
@@ -100,24 +158,35 @@ def main():
     select = int(input())
 
     if select == 1:
+        with open("testData/ЛСП - Один.mp3", "rb") as f:
+            m = f.read()
+            print(m)
+        f.close()
+        print("Enter p(Prime and p > 255):")
+        p = int(input())
+        print(shamir_secret(m, p))
+
+    if select == 2:
         with open("testData/test.jpg", "rb") as f:
             m = f.read()
             print(m)
         f.close()
         print("Enter p(Prime and p > 255):")
         p = int(input())
-        # print('m = ', int.from_bytes(m))
-        # print(int.from_bytes(m, 'big') > p)
-        print(shamir_secret(m, p))
+        print("Enter g :")
+        g = int(input())
+        el_gamal(p, g, m)
 
-    if select == 2:
-        # print("Enter p(Prime and p > 255):")
-        # p = int(input())
-        # print("Enter g :")
-        # g = int(input())
-        el_gamal(23, 5, 15)
-    #
-    # if select == 3:
+    if select == 3:
+        # with open("testData/test.jpg", "rb") as f:
+        #     m = f.read()
+        #     print(m)
+        # f.close()
+        a = "1000"
+        b = "1010"
+        y = int(a, 2) ^ int(b, 2)
+        print(bin(y)[2:].zfill(len(a)))
+
     #     vernam()
     #
     # if select == 4:
