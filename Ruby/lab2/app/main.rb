@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
-
 require_relative 'calculate'
 require_relative 'input'
 
-def main()
+if $PROGRAM_NAME == __FILE__
   obj = Input.new
   math = Calculate.new
   cnt = 1
@@ -52,5 +51,3 @@ def main()
     break
   end
 end
-
-main
