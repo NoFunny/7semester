@@ -9,8 +9,8 @@ import lab1
 
 
 # Поиск всех простых чисел до P
-def eratosthenes(p):
-    s = [x for x in range(5, p + 1) if
+def eratosthenes(n, p):
+    s = [x for x in range(n, p + 1) if
          x not in [i for sub in [list(range(2 * j, p + 1, j)) for j in range(2, p // 2)] for i in sub]]
     return s[random.randint(0, s.__len__() - 1)]
 
@@ -24,8 +24,8 @@ def isPrime(n):
 
 def shamir_secret(m, p):
     if not (isPrime(p) and (p > 255)): sys.exit('ERROR. [P] must be prime number or p <= 255.')
-    Ca = eratosthenes(p - 1)
-    Cb = eratosthenes(p - 1)
+    Ca = eratosthenes(5, p - 1)
+    Cb = eratosthenes(5, p - 1)
     Da = lab1.genEuclideanAlgo(Ca, p - 1)[1]
     Db = lab1.genEuclideanAlgo(Cb, p - 1)[1]
     if int.from_bytes(m, 'big') >= p:
@@ -84,7 +84,6 @@ def el_gamal(p, g, m):
 
         for i in range(0, m.__len__()):
             k[i] = random.randint(1, p - 2)
-            print(k[i])
             r[i] = lab1.fastModuloExponentiation(g, k[i], p)
             e[i] = m[i] * lab1.fastModuloExponentiation(Db, k[i], p) % p
             mx[i] = e[i] * lab1.fastModuloExponentiation(r[i], p - 1 - Cb, p) % p
@@ -145,13 +144,45 @@ class Vernam:
         return True
 
 
-# def rsa(p):
-#
+class RSA:
+    # m < N
+    def __init__(self, p, q, m):
+        if m is None:
+            self.m = []
+        else:
+            self.m = m
+        self.N = p * q
+        self.F = (p - 1) * (q - 1)
+        self.D = eratosthenes(5, self.F)
+        self.C = lab1.genEuclideanAlgo(self.D, self.F)[1]
+
+    def encrypt(self, D, N):
+        e = [0] * self.m.__len__()
+        for i in range(0, self.m.__len__()):
+            e[i] = lab1.fastModuloExponentiation(self.m[i], D, N)
+        return e
+
+    def decrypt(self, e):
+        mx = [0] * e.__len__()
+        for i in range(0, e.__len__()):
+            mx[i] = lab1.fastModuloExponentiation(e[i], self.C, self.N)
+        return mx
+
+    @staticmethod
+    def compare(mx, m):
+        for i in range(0, m.__len__()):
+            if m[i] == mx[i]:
+                print(mx[i], ' == ', m[i])
+                continue
+            else:
+                print(mx[i], ' != ', m[i])
+                print("Error!")
+                return False
+        print("Successful!")
+        return True
+
 
 def main():
-    
-    # TODO:
-    # Нужно сделать генерацию P и G!
 
     # Section №0 -- # Menu
     print('''Select case:
@@ -162,24 +193,29 @@ def main():
 
     select = int(input())
 
+    #TODO:
+    # Нужно сделать генерацию P
     if select == 1:
-        with open("testData/ЛСП - Один.mp3", "rb") as f:
-            m = f.read()
-            print(m)
-        f.close()
-        print("Enter p(Prime and p > 255):")
-        p = int(input())
-        print(shamir_secret(m, p))
-
-    if select == 2:
         with open("testData/test.jpg", "rb") as f:
             m = f.read()
             print(m)
         f.close()
-        print("Enter p(Prime and p > 255):")
-        p = int(input())
-        print("Enter g :")
-        g = int(input())
+        p = eratosthenes(255, 1000)
+        print("P = ", p)
+        print(shamir_secret(m, p))
+
+    if select == 2:
+        #TODO:
+        # Нужно сделать генерацию P и G!
+
+        with open("testData/test.jpg", "rb") as f:
+            m = f.read()
+            print(m)
+        f.close()
+        p = eratosthenes(255, 1000)
+        print("P = ", p)
+        g = random.randint(1, 255)
+        print("G = ", g)
         el_gamal(p, g, m)
 
     if select == 3:
@@ -191,14 +227,29 @@ def main():
         for i in range(0, m.__len__()):
             k.append(random.randint(0, 255))
         vernam = Vernam(m, k)
-        print(k)
         vernam.encrypt()
         vernam.decrypt()
         print(vernam.compare())
         del vernam
 
-    # if select == 4:
-        # rsa()
+    #TODO:
+    # Сделать генерацию P и Q
+
+    if select == 4:
+        with open("testData/test.jpg", "rb") as f:
+            m = f.read()
+            print(m)
+        f.close()
+        P = eratosthenes(5, 100)
+        print("P = ", P)
+        Q = eratosthenes(5, 100)
+        print("Q = ", Q)
+        Alice = RSA(P, Q, m)
+        Bob = RSA(P, Q, None)
+        encrypted_message = Alice.encrypt(Bob.D, Bob.N)
+        print(encrypted_message)
+        decrypted_message = Bob.decrypt(encrypted_message)
+        RSA.compare(decrypted_message, m)
 
 
 if __name__ == "__main__":

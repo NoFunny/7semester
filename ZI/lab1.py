@@ -5,11 +5,18 @@ import math
 import random
 
 
+# Поиск всех простых чисел до P
+def eratosthenes(n, p):
+    s = [x for x in range(n, p + 1) if
+         x not in [i for sub in [list(range(2 * j, p + 1, j)) for j in range(2, p // 2)] for i in sub]]
+    return s[random.randint(0, s.__len__() - 1)]
+
+
 def isPrime(n):
-    if n <= 2: return False
-    for num in range(2, math.floor(math.sqrt(n).__int__())):
-        if n % num == 0: return False
-    return True
+    if (math.factorial(n - 1) + 1) % n != 0:
+        return False
+    else:
+        return True
 
 
 def mulinv(b, n):
@@ -19,7 +26,6 @@ def mulinv(b, n):
 
 
 def fastModuloExponentiation(a, x, p):
-    if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
     if 1 > x >= p: sys.exit('ERROR. [X] Must be from range (1, 2, ... , p-1)')
     result = 1
     tmp = a
@@ -44,10 +50,15 @@ def genEuclideanAlgo(a, b):
         return g, y - (b // a) * x, x
 
 
-def diffieHellmanProtocol(q):
-    if not isPrime(q): sys.exit('ERROR. [q] must be prime number.')
-    p = q * 2 + 1
-    if not isPrime(p): sys.exit('ERROR. [p = 2q + 1] must be prime number.')
+def diffieHellmanProtocol():
+    flag = 1
+    while flag:
+        q = eratosthenes(2, 110)
+        print("q =", q)
+        if not isPrime(q): sys.exit('ERROR. [q] must be prime number.')
+        p = q * 2 + 1
+        if not isPrime(p): flag = 1
+        else: flag = 0
 
     g = random.randint(1, p - 1)
     while fastModuloExponentiation(g, q, p) == 1: g = random.randint(1, p - 1)
@@ -61,6 +72,7 @@ def diffieHellmanProtocol(q):
 
 
 def babyGiantStep(a, p, y):
+    if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
     steps = ({})
     # 2*sqrt(p)
     m = math.ceil(math.sqrt(p) + 1)
@@ -103,8 +115,13 @@ def main():
 
     if select == 1:
         # Section №1 --- # Fast modulo exponential
-        print('input g, x(1, 2, ... , p-1), p(Prime), :')
-        g, x, p = int(input()), int(input()), int(input())
+        g = random.randint(1, 23)
+        p = eratosthenes(2, 110)
+        x = random.randint(1, p-1)
+        print("g = ", g)
+        print("p = ", p)
+        print("x = ", x)
+        # g, x, p = int(input()), int(input()), int(input())
 
         print(fastModuloExponentiation(g, x, p))
 
@@ -119,14 +136,17 @@ def main():
 
     if select == 3:
         # Section №3 --- # Diffie-Hellman protocol. Generating common key's.
-        print('input q(Prime)')
-        q = int(input())
-        print(diffieHellmanProtocol(q))
+        print(diffieHellmanProtocol())
 
     if select == 4:
         # Section №4 --- # Baby step, Giant step algorithm.
-        print('input g, p, y:')
-        g, p, y = int(input()), int(input()), int(input())
+        g = random.randint(1, 23)
+        p = eratosthenes(2, 110)
+        y = random.randint(1, 50)
+        print("g = ", g)
+        print("p = ", p)
+        print("y = ", y)
+        # g, p, y = int(input()), int(input()), int(input())
 
         result = babyGiantStep(g, p, y)
         print(g, '^', result, ' mod ', p, ' = ', y)
