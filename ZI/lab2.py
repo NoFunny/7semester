@@ -183,18 +183,20 @@ class RSA:
 
 
 def main():
-
+    select = 0
     # Section №0 -- # Menu
     print('''Select case:
             1) Shamir secret
             2) El Gamal
             3) Vernam
             4) RSA''')
+    try:
+        select = int(input())
+    except ValueError:
+        print("Тебе же сказали, выбери число от 1 до 4")
+    except UnboundLocalError:
+        print("Тебе же сказали, выбери число от 1 до 4")
 
-    select = int(input())
-
-    #TODO:
-    # Нужно сделать генерацию P
     if select == 1:
         with open("testData/test.jpg", "rb") as f:
             m = f.read()
@@ -205,9 +207,6 @@ def main():
         print(shamir_secret(m, p))
 
     if select == 2:
-        #TODO:
-        # Нужно сделать генерацию P и G!
-
         with open("testData/test.jpg", "rb") as f:
             m = f.read()
             print(m)
@@ -231,9 +230,6 @@ def main():
         vernam.decrypt()
         print(vernam.compare())
         del vernam
-
-    #TODO:
-    # Сделать генерацию P и Q
 
     if select == 4:
         with open("testData/test.jpg", "rb") as f:

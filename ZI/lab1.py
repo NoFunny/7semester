@@ -104,6 +104,7 @@ def babyGiantStep(a, p, y):
 
 
 def main():
+    select = 0
     # Section №0 -- # Menu
     print('''Select case:
         1) Fast Modulo Exponential
@@ -111,7 +112,12 @@ def main():
         3) Diffie-Hellman protocol
         4) Baby-step, giant-step''')
 
-    select = int(input())
+    try:
+        select = int(input())
+    except ValueError:
+        print("Тебе же сказали, выбери число от 1 до 4")
+    except UnboundLocalError:
+        print("Тебе же сказали, выбери число от 1 до 4")
 
     if select == 1:
         # Section №1 --- # Fast modulo exponential
