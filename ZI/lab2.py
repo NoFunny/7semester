@@ -8,13 +8,6 @@ import io
 import lab1
 
 
-# Поиск всех простых чисел до P
-def eratosthenes(n, p):
-    s = [x for x in range(n, p + 1) if
-         x not in [i for sub in [list(range(2 * j, p + 1, j)) for j in range(2, p // 2)] for i in sub]]
-    return s[random.randint(0, s.__len__() - 1)]
-
-
 def isPrime(n):
     if n <= 2: return False
     for num in range(2, math.floor(math.sqrt(n))):
@@ -24,8 +17,8 @@ def isPrime(n):
 
 def shamir_secret(m, p):
     if not (isPrime(p) and (p > 255)): sys.exit('ERROR. [P] must be prime number or p <= 255.')
-    Ca = eratosthenes(5, p - 1)
-    Cb = eratosthenes(5, p - 1)
+    Ca = lab1.generate_g(p)
+    Cb = lab1.generate_g(p)
     Da = lab1.genEuclideanAlgo(Ca, p - 1)[1]
     Db = lab1.genEuclideanAlgo(Cb, p - 1)[1]
     if int.from_bytes(m, 'big') >= p:
@@ -41,8 +34,23 @@ def shamir_secret(m, p):
             x3[i] = lab1.fastModuloExponentiation(x2[i], Da, p)
             x4[i] = lab1.fastModuloExponentiation(x3[i], Db, p)
             # Проверка на равность полученного сообщения и изначального
+        # out1 = [] * m.__len__()
+        # out2 = [] * m.__len__()
+        # out3 = [] * m.__len__()
+        # out4 = [] * m.__len__()
+        # out1 = bytearray(x1)
+        # out2 = bytearray(x2)
+        # out3 = bytearray(x3)
+        out = bytearray(x4)
+        # with open("x1.jpg", 'wb') as f:
+        #     f.write(out1)
+        # with open("x2.jpg", 'wb') as f:
+        #     f.write(out2)
+        # with open("x3.jpg", 'wb') as f:
+        #     f.write(out3)
+        with open("Shamir_out.jpg", 'wb') as f:
+            f.write(out)
         for i in range(0, m.__len__()):
-            # print(x4)
             if x4[i] == m[i]:
                 print(x4[i], ' == ', m[i])
                 continue
@@ -87,6 +95,9 @@ def el_gamal(p, g, m):
             r[i] = lab1.fastModuloExponentiation(g, k[i], p)
             e[i] = m[i] * lab1.fastModuloExponentiation(Db, k[i], p) % p
             mx[i] = e[i] * lab1.fastModuloExponentiation(r[i], p - 1 - Cb, p) % p
+        out = bytearray(mx)
+        with open("elGamal_out.jpg", 'wb') as f:
+            f.write(out)
         for i in range(0, m.__len__()):
             if mx[i] == m[i]:
                 print(mx[i], ' == ', m[i])
@@ -117,7 +128,7 @@ class Vernam:
         self.m = m
         self.k = k
         self.mx = [0] * m.__len__()
-        self.encrypted_message = [0] * m.__len__()
+        self.decrypted_message = [0] * m.__len__()
 
     def encrypt(self):
         mx = [0] * self.m.__len__()
@@ -128,16 +139,16 @@ class Vernam:
 
     def decrypt(self):
         for i in range(0, self.m.__len__()):
-            self.encrypted_message[i] = self.mx[i] ^ self.k[i]
-        return self.m
+            self.decrypted_message[i] = self.mx[i] ^ self.k[i]
+        return self.decrypted_message
 
     def compare(self):
         for i in range(0, self.m.__len__()):
-            if self.m[i] == self.encrypted_message[i]:
-                print(self.encrypted_message[i], ' == ', self.m[i])
+            if self.m[i] == self.decrypted_message[i]:
+                print(self.decrypted_message[i], ' == ', self.m[i])
                 continue
             else:
-                print(self.encrypted_message[i], ' != ', self.m[i])
+                print(self.decrypted_message[i], ' != ', self.m[i])
                 print("Error!")
                 return False
         print("Successful!")
@@ -153,7 +164,7 @@ class RSA:
             self.m = m
         self.N = p * q
         self.F = (p - 1) * (q - 1)
-        self.D = eratosthenes(5, self.F)
+        self.D = lab1.generate_g(self.F)
         self.C = lab1.genEuclideanAlgo(self.D, self.F)[1]
 
     def encrypt(self, D, N):
@@ -202,7 +213,7 @@ def main():
             m = f.read()
             print(m)
         f.close()
-        p = eratosthenes(255, 1000)
+        p = lab1.generate_p()
         print("P = ", p)
         print(shamir_secret(m, p))
 
@@ -211,9 +222,9 @@ def main():
             m = f.read()
             print(m)
         f.close()
-        p = eratosthenes(255, 1000)
+        p = lab1.generate_p()
         print("P = ", p)
-        g = random.randint(1, 255)
+        g = lab1.generate_g(p)
         print("G = ", g)
         el_gamal(p, g, m)
 
@@ -225,10 +236,18 @@ def main():
         k = []
         for i in range(0, m.__len__()):
             k.append(random.randint(0, 255))
+            # Проверка на длину ключа
+
         vernam = Vernam(m, k)
-        vernam.encrypt()
-        vernam.decrypt()
+        encrypt = vernam.encrypt()
+        decrypt = vernam.decrypt()
         print(vernam.compare())
+        out = bytearray(encrypt)
+        out2 = bytearray(decrypt)
+        with open("Vernam_enc.jpg", 'wb') as f:
+            f.write(out)
+        with open("Vernam_dec.jpg", 'wb') as f:
+            f.write(out2)
         del vernam
 
     if select == 4:
@@ -236,9 +255,9 @@ def main():
             m = f.read()
             print(m)
         f.close()
-        P = eratosthenes(5, 100)
+        P = lab1.generate_p()
         print("P = ", P)
-        Q = eratosthenes(5, 100)
+        Q = lab1.generate_p()
         print("Q = ", Q)
         Alice = RSA(P, Q, m)
         Bob = RSA(P, Q, None)
@@ -246,6 +265,14 @@ def main():
         print(encrypted_message)
         decrypted_message = Bob.decrypt(encrypted_message)
         RSA.compare(decrypted_message, m)
+        # out = bytearray(encrypted_message)
+        out2 = bytearray(decrypted_message)
+        # with open("RSA_enc.jpg", 'wb') as f:
+        #     f.write(out)
+        with open("RSA_dec.jpg", 'wb') as f:
+            f.write(out2)
+
+        del Alice, Bob
 
 
 if __name__ == "__main__":

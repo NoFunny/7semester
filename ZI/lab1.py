@@ -5,11 +5,44 @@ import math
 import random
 
 
-# Поиск всех простых чисел до P
-def eratosthenes(n, p):
-    s = [x for x in range(n, p + 1) if
-         x not in [i for sub in [list(range(2 * j, p + 1, j)) for j in range(2, p // 2)] for i in sub]]
-    return s[random.randint(0, s.__len__() - 1)]
+def miller_rabin(n, k):
+    if n == 2 or n == 3:
+        return True
+    if n < 2 or n % 2 == 0:
+        return False
+    t = n - 1
+    s = 0
+    while t % 2 == 0:
+        t /= 2
+        s += 1
+    for i in range(0, k):
+        a = random.randint(2, n - 2)
+        x = fastModuloExponentiation(a, int(t), int(n))
+        if x == 1 or x == n - 1:
+            continue
+        for r in range(1, s):
+            x = fastModuloExponentiation(x, 2, n)
+            if x == 1:
+                return False
+            if x == n - 1:
+                break
+        if x != n - 1:
+            return False
+    return True
+
+
+def generate_p():
+    q = random.randint(10 ** 6, 10 ** 9)
+    while not (miller_rabin(q, int(math.log2(q))) and miller_rabin(q * 2 + 1, int(math.log2(q * 2 + 1)))):
+        q = random.randint(10 ** 6, 10 ** 9)
+    return 2 * q + 1
+
+
+def generate_g(p):
+    while True:
+        g = random.randint(2, 100)
+        if fastModuloExponentiation(g, int((p - 1) / 2), p) != 1 and isPrime(g):
+            return g
 
 
 def isPrime(n):
@@ -52,15 +85,19 @@ def genEuclideanAlgo(a, b):
 
 def diffieHellmanProtocol():
     flag = 1
+    q = 0
+    p = 0
     while flag:
-        q = eratosthenes(2, 110)
+        p = generate_p()
+        q = generate_g(p)
         print("q =", q)
-        if not isPrime(q): sys.exit('ERROR. [q] must be prime number.')
-        p = q * 2 + 1
-        if not isPrime(p): flag = 1
-        else: flag = 0
+        if not isPrime(q):
+            print('ERROR. [q] must be prime number.')
+            flag = 1
+        else:
+            flag = 0
 
-    g = random.randint(1, p - 1)
+    g = generate_g(p)
     while fastModuloExponentiation(g, q, p) == 1: g = random.randint(1, p - 1)
 
     xA, xB = random.randint(1, 10), random.randint(1, 10)
@@ -121,12 +158,12 @@ def main():
 
     if select == 1:
         # Section №1 --- # Fast modulo exponential
-        g = random.randint(1, 23)
-        p = eratosthenes(2, 110)
-        x = random.randint(1, p-1)
-        print("g = ", g)
-        print("p = ", p)
-        print("x = ", x)
+        p = generate_p()
+        g = generate_g(p)
+        x = random.randint(1, p - 1)
+        # print("g = ", g)
+        # print("p = ", p)
+        # print("x = ", x)
         # g, x, p = int(input()), int(input()), int(input())
 
         print(fastModuloExponentiation(g, x, p))
@@ -146,9 +183,9 @@ def main():
 
     if select == 4:
         # Section №4 --- # Baby step, Giant step algorithm.
-        g = random.randint(1, 23)
-        p = eratosthenes(2, 110)
-        y = random.randint(1, 50)
+        p = generate_p()
+        g = generate_g(p)
+        y = random.randint(1, 10 ** 9)
         print("g = ", g)
         print("p = ", p)
         print("y = ", y)
