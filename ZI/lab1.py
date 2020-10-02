@@ -110,34 +110,38 @@ def diffieHellmanProtocol():
 
 def babyGiantStep(a, p, y):
     if not isPrime(p): sys.exit('ERROR. [P] must be prime number.')
-    steps = ({})
-    # 2*sqrt(p)
-    m = math.ceil(math.sqrt(p) + 1)
-    k = fastModuloExponentiation(a, m, p)
-    val1 = y % p
-    i = 0
+    C = 0
+    M = 0
 
-    # Время выполнения log(p)
-    while i < m:
-        print(steps)
-        steps[val1] = i
-        val1 = (val1 * a) % p
-        i += 1
-    val2 = fastModuloExponentiation(a, m, p)
-    i = 1
-    # Время выполнения log(p)
-    while i <= k - 1:
-        # Проход по словарю: O(k).
-        if steps.__contains__(val2):
-            print(steps[val2])
-            ans = i * m - steps[val2]
-            print('ans = ', ans)
-            if fastModuloExponentiation(a, ans, p) == y:
-                return ans
-        val2 = (val2 * k) % p
-        i += 1
-        # Общая сложность sqrt(p)*log^2(p)
-    return -1
+    m = k = math.ceil(math.sqrt(p))
+
+    A = []
+    B = []
+    for i in range(0, m):
+        A.append((a ** i * y) % p)
+        M += 1
+    for i in range(1, k * m):
+        B.append((a ** (i * m)) % p)
+        M += 1
+
+    d = {}
+
+    for i in range(0, len(A)):
+        d[A[i]] = i
+        M += 1
+
+    for i in range(0, len(B)):
+        C += 1
+        if d.get(B[i]) is not None:
+            break
+
+    x = (i + 1) * m - d[B[i]]
+    M += 1
+    print("x = " + str(x))
+
+    C += M
+    print(C)
+    return x
 
 
 def main():

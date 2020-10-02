@@ -201,6 +201,8 @@ def main():
             2) El Gamal
             3) Vernam
             4) RSA''')
+    if select < 1 or select > 4:
+        sys.exit("Тебе же сказали, выбери число от 1 до 4")
     try:
         select = int(input())
     except ValueError:
@@ -265,10 +267,7 @@ def main():
         print(encrypted_message)
         decrypted_message = Bob.decrypt(encrypted_message)
         RSA.compare(decrypted_message, m)
-        # out = bytearray(encrypted_message)
         out2 = bytearray(decrypted_message)
-        # with open("RSA_enc.jpg", 'wb') as f:
-        #     f.write(out)
         with open("RSA_dec.jpg", 'wb') as f:
             f.write(out2)
 
