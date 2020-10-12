@@ -26,29 +26,14 @@ def shamir_secret(m, p):
         x2 = [0] * m.__len__()
         x3 = [0] * m.__len__()
         x4 = [0] * m.__len__()
-        print(Ca, Cb, Da, Db)
-
         for i in range(0, m.__len__()):
             x1[i] = lab1.fastModuloExponentiation(m[i], Ca, p)
             x2[i] = lab1.fastModuloExponentiation(x1[i], Cb, p)
             x3[i] = lab1.fastModuloExponentiation(x2[i], Da, p)
             x4[i] = lab1.fastModuloExponentiation(x3[i], Db, p)
             # Проверка на равность полученного сообщения и изначального
-        # out1 = [] * m.__len__()
-        # out2 = [] * m.__len__()
-        # out3 = [] * m.__len__()
-        # out4 = [] * m.__len__()
-        # out1 = bytearray(x1)
-        # out2 = bytearray(x2)
-        # out3 = bytearray(x3)
         out = bytearray(x4)
-        # with open("x1.jpg", 'wb') as f:
-        #     f.write(out1)
-        # with open("x2.jpg", 'wb') as f:
-        #     f.write(out2)
-        # with open("x3.jpg", 'wb') as f:
-        #     f.write(out3)
-        with open("Shamir_out.jpg", 'wb') as f:
+        with open("Shamir_out.gif", 'wb') as f:
             f.write(out)
         for i in range(0, m.__len__()):
             if x4[i] == m[i]:
@@ -65,6 +50,7 @@ def shamir_secret(m, p):
         x2 = lab1.fastModuloExponentiation(x1, Cb, p)
         x3 = lab1.fastModuloExponentiation(x2, Da, p)
         x4 = lab1.fastModuloExponentiation(x3, Db, p)
+
         # Проверка на равность полученного сообщения и изначального
         if not x4 == int.from_bytes(m, 'big'):
             print(x4, ' != ', m)
@@ -96,7 +82,7 @@ def el_gamal(p, g, m):
             e[i] = m[i] * lab1.fastModuloExponentiation(Db, k[i], p) % p
             mx[i] = e[i] * lab1.fastModuloExponentiation(r[i], p - 1 - Cb, p) % p
         out = bytearray(mx)
-        with open("elGamal_out.jpg", 'wb') as f:
+        with open("elGamal_out.mp3", 'wb') as f:
             f.write(out)
         for i in range(0, m.__len__()):
             if mx[i] == m[i]:
@@ -201,17 +187,18 @@ def main():
             2) El Gamal
             3) Vernam
             4) RSA''')
-    if select < 1 or select > 4:
-        sys.exit("Тебе же сказали, выбери число от 1 до 4")
     try:
         select = int(input())
     except ValueError:
-        print("Тебе же сказали, выбери число от 1 до 4")
+        sys.exit("Тебе же сказали, выбери число от 1 до 4")
     except UnboundLocalError:
-        print("Тебе же сказали, выбери число от 1 до 4")
+        sys.exit("Тебе же сказали, выбери число от 1 до 4")
+
+    if select < 1 or select > 4:
+        sys.exit("Тебе же сказали, выбери число от 1 до 4")
 
     if select == 1:
-        with open("testData/test.jpg", "rb") as f:
+        with open("testData/giphy.gif", "rb") as f:
             m = f.read()
             print(m)
         f.close()
@@ -220,7 +207,7 @@ def main():
         print(shamir_secret(m, p))
 
     if select == 2:
-        with open("testData/test.jpg", "rb") as f:
+        with open("testData/ЛСП - Один.mp3", "rb") as f:
             m = f.read()
             print(m)
         f.close()
@@ -231,7 +218,7 @@ def main():
         el_gamal(p, g, m)
 
     if select == 3:
-        with open("testData/test.jpg", "rb") as f:
+        with open("testData/giphy.gif", "rb") as f:
             m = f.read()
             print(m)
         f.close()
@@ -246,14 +233,14 @@ def main():
         print(vernam.compare())
         out = bytearray(encrypt)
         out2 = bytearray(decrypt)
-        with open("Vernam_enc.jpg", 'wb') as f:
+        with open("Vernam_enc.gif", 'wb') as f:
             f.write(out)
-        with open("Vernam_dec.jpg", 'wb') as f:
+        with open("Vernam_dec.gif", 'wb') as f:
             f.write(out2)
         del vernam
 
     if select == 4:
-        with open("testData/test.jpg", "rb") as f:
+        with open("testData/giphy.gif", "rb") as f:
             m = f.read()
             print(m)
         f.close()
@@ -268,7 +255,7 @@ def main():
         decrypted_message = Bob.decrypt(encrypted_message)
         RSA.compare(decrypted_message, m)
         out2 = bytearray(decrypted_message)
-        with open("RSA_dec.jpg", 'wb') as f:
+        with open("RSA_dec.gif", 'wb') as f:
             f.write(out2)
 
         del Alice, Bob
